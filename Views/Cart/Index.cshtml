@@ -1,0 +1,196 @@
+﻿@model IEnumerable<NguyenNhutDuy_2122110447.Models.CartModel>
+@{
+    ViewBag.Title = "Index";
+}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Xóa sản phẩm khỏi giỏ hàng
+        $(".removecart").click(function () {
+            var model = {};
+            // Lấy ID sản phẩm từ thuộc tính data-id
+            model.Id = $(this).data('id');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Remove", "Cart")',
+                data: JSON.stringify(model),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    $('#CartCount').text(parseInt($('#CartCount').text()) - 1);
+                    $("#product-" + model.Id).remove();
+                    updateTotal();
+                },
+                error: function () {
+                    alert("Lỗi trong khi xóa sản phẩm khỏi giỏ hàng!");
+                }
+            });
+            return false;
+        });
+
+        function updatePrice(row) {
+            let quantity = parseInt($(row).find('.ipQuantity').val());
+            let price = parseFloat($(row).find('.productPrice').val());
+            let totalPrice = price * quantity;
+            $(row).find('.price').text(totalPrice.toLocaleString('en-US'));
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let total = 0;
+            $('.price').each(function () {
+                total += parseFloat($(this).text().replace(/[^0-9.-]+/g, ''));
+            });
+
+            // Giả sử phí vận chuyển miễn phí
+            let shippingCost = 0;
+            let grandTotal = total + shippingCost;
+
+            // Cập nhật hiển thị tổng và tổng tiền
+            $('#totalAmount').text(total.toLocaleString('en-US'));
+            $('#grandTotal').text(grandTotal.toLocaleString('en-US'));
+        }
+
+        // Xử lý sự kiện tăng giảm số lượng
+        $(document).on('click', '.button-minus', function () {
+            let row = $(this).closest('tr');
+            let quantity = parseInt(row.find('.ipQuantity').val());
+            if (quantity > 1) {
+                row.find('.ipQuantity').val(quantity - 1);
+                updatePrice(row);
+            } else {
+                alert("Số lượng không thể nhỏ hơn 1!");
+            }
+        });
+
+        $(document).on('click', '.button-plus', function () {
+            let row = $(this).closest('tr');
+            let quantity = parseInt(row.find('.ipQuantity').val());
+            row.find('.ipQuantity').val(quantity + 1);
+            updatePrice(row);
+        });
+
+        // Gọi hàm cập nhật tổng khi tải trang lần đầu
+        updateTotal();
+    });
+</script>
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+    <div class="container">
+
+        <div class="row">
+            <main class="col-md-9">
+                <div class="card">
+
+                    <table class="table table-borderless table-shopping-cart">
+                        <thead class="text-muted">
+                            <tr class="small text-uppercase">
+                                <th scope="col">Sản phẩm</th>
+                                <th scope="col" width="120">Số lượng</th>
+                                <th scope="col" width="120">Giá (VND)</th>
+                                <th scope="col" class="text-right" width="200"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Session["email"] == null)
+                            {
+                                <h2 class="m-4">Đăng nhập để xem giỏ hàng của bạn</h2>
+                            }
+                            else if (Model != null && Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr id="product-@item.Product.id">
+                                        <td>
+                                            <figure class="itemside">
+                                                <div class="aside">
+                                                    <img src="~/Content/images/items/@item.Product.image" class="img-sm">
+                                                </div>
+                                                <figcaption class="info">
+                                                    <a href="#" class="title text-dark">@item.Product.name</a>
+                                                    <p class="text-muted small">Size: XL, Color: blue, <br> Brand: Gucci</p>
+                                                </figcaption>
+                                            </figure>
+                                        </td>
+                                        <td>
+                                            <div class="input-group mb-3 input-spinner">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-light button-minus" type="button"> - </button>
+                                                </div>
+                                                <input type="text" class="form-control ipQuantity" value="@item.Quantity" readonly />
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-light button-plus" type="button"> + </button>
+                                                </div>
+                                                <input type="hidden" class="productPrice" value="@item.Product.price_sale" />
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="price-wrap">
+                                                <h6 class="price">@String.Format("{0:N0}", item.Product.price_sale * item.Quantity)</h6>
+                                                <small class="text-muted">@String.Format("{0:N0}", item.Product.price_sale)</small>
+                                            </div>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="hidden" value="@item.Product.id" class="productid" />
+                                            <a href="javascript:void(0);" class="btn btn-light removecart" data-id="@item.Product.id">Xóa</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <h2 class="m-4">Giỏ hàng trống, hãy lấp đầy giỏ hàng nào!</h2>
+                            }
+
+
+
+
+                        </tbody>
+                    </table>
+
+                    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Tiếp tục mua hàng </a>
+                </div> <!-- card.// -->
+
+                <div class="alert alert-success mt-3">
+                    <p class="icontext"><i class="icon text-success fa fa-truck"></i> Thời gian vận chuyển 1-2 tuần</p>
+                </div>
+
+            </main> <!-- col.// -->
+            <aside class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <dl class="dlist-align">
+                            <dt>Tổng:</dt>
+                            <dd class="text-right" id="totalAmount">@String.Format("{0:N0} VND", ViewBag.Total)</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Phí vận chuyển:</dt>
+                            <dd class="text-right">Miễn phí</dd>
+                        </dl>
+                        <dl class="dlist-align">
+                            <dt>Tổng tiền:</dt>
+                            <dd class="text-right h5"><strong id="grandTotal">@String.Format("{0:N0} VND", ViewBag.Total)</strong></dd>
+                        </dl>
+                        <hr>
+                        <p class="text-center mb-3">
+                            <img src="~/Content/images/misc/payments.png" height="26">
+                        </p>
+
+                    </div> <!-- card-body.// -->
+                    @if (Session["cart"] != null)
+                    {
+                        <a href="@Url.Action("ThanhToan", "GioHang")" class="btn btn-primary">Thanh toán</a>
+                    }
+                    else
+                    {
+                        <a href="#" class="btn btn-primary disabled" aria-disabled="true">Thanh toán</a>
+                    }
+                </div>  <!-- card .// -->
+            </aside> <!-- col.// -->
+        </div>
+
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->

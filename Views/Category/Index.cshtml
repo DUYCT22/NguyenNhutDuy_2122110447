@@ -1,0 +1,26 @@
+﻿@model IEnumerable<NguyenNhutDuy_2122110447.Context.Category>
+    <section class="section-content padding-y">
+        <div class="container">
+            <nav class="row">
+                @foreach (var item in Model)
+                {
+                        
+                    <div class="col-md-2">
+                        <div class="card card-category" style="height:120px">
+                            <div class="img-wrap" style="background: #ffd7d7; width:100%">
+                                <img src="~/Content/images/items/@Html.DisplayFor(modelItem => item.image)">
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title"><a href="@Url.Action("ProductByCategory", "Category", new { id = item.id })">@Html.DisplayFor(modelItem => item.name)</a></h4>
+                                <p>@Html.DisplayFor(modelItem => item.description)</p>
+                            </div>
+                        </div>
+                    </div> <!-- col.// -->
+    }
+                </nav> <!-- row.// -->
+                </div> <!-- container .//  -->
+                </section>
+
+
+
+                <!-- ========================= SECTION CONTENT END// ========================= -->
