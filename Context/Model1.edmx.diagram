@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="5a3c69a76e764917b3b1005e3a6d87a9" Name="Diagram1">
+        <EntityTypeShape EntityType="ASP.NETModel.Banner" Width="1.5" PointX="2.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ASP.NETModel.Brand" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ASP.NETModel.Category" Width="1.5" PointX="0.75" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ASP.NETModel.Order" Width="1.5" PointX="3" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ASP.NETModel.Order_Detail" Width="1.5" PointX="5.25" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="ASP.NETModel.Product" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="ASP.NETModel.User" Width="1.5" PointX="0.75" PointY="9.25" IsExpanded="true" />
+        <AssociationConnector Association="ASP.NETModel.FK__Product__brand_i__09A971A2" ManuallyRouted="false" />
+        <AssociationConnector Association="ASP.NETModel.FK__Product__categor__0A9D95DB" ManuallyRouted="false" />
+        <AssociationConnector Association="ASP.NETModel.FK__Order__user_id__1332DBDC" ManuallyRouted="false" />
+        <AssociationConnector Association="ASP.NETModel.FK__Order_Det__order__17036CC0" ManuallyRouted="false" />
+        <AssociationConnector Association="ASP.NETModel.FK__Order_Det__produ__17F790F9" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

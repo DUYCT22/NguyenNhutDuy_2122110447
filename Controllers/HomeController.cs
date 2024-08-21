@@ -9,12 +9,14 @@ namespace NguyenNhutDuy_2122110447.Controllers
 {
     public class HomeController : Controller
     {
-        ASPEntities2 db = new ASPEntities2();
+        Entities3 db = new Entities3();
         public ActionResult Index()
         {
             Home dl = new Home();
             dl.ListCategory = db.Categories.ToList();
-            dl.ListProduct = db.Products.ToList();
+            dl.ListProduct = db.Products.Where(p => p.price_sale != null).ToList();
+            dl.ListProByCate = db.Products.Where(p => p.brand_id == 4).ToList();
+            dl.ListProByCate2 = db.Products.Where(p => p.brand_id == 5).ToList();
             return View(dl);
         }
 

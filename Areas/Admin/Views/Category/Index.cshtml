@@ -1,46 +1,125 @@
-﻿@model IEnumerable<NguyenNhutDuy_2122110447.Context.Category>
-<div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <div class="content-header">
-        <div class="container-fluid">
-            <p>
-                @Html.ActionLink("Create", "Create")
-            </p>
-            <table class="table">
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.image)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.description)
-                    </th>
-                    <th></th>
-                </tr>
+﻿@using PagedList.Mvc;
+@using PagedList;
+@model PagedList.IPagedList<NguyenNhutDuy_2122110447.Context.Category>
+<p>
+    @Html.ActionLink("Create", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().id)
+        </th>
+        <th>
+            <p>Tên</p>
+        </th>
+        <th>
+            <p>Hình ảnh</p>
+        </th>
+        <th>
+            <p>Mô tả</p>
+        </th>
+        <th>
+            <p>Tạo lúc</p>
+        </th>
+        <th>
+            <p>Cập nhật</p>
+        </th>
+        <th></th>
+    </tr>
 
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.name)
-                        </td>
-                        <td>
-                            <img class="w-25" src="~/Content/images/items/@item.image">
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.description)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.id }) |
-                            @Html.ActionLink("Details", "Details", new { id = item.id }) |
-                            @Html.ActionLink("Delete", "Delete", new { id = item.id })
-                        </td>
-                    </tr>
-                }
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.name)
+            </td>
+            <td>
+                <img class="w-25" src="~/Content/images/items/@item.image">
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.created_at)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.updated_at)
+            </td>
+            <td>
+                @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.id }) |
+                @Html.ActionLink("Chi tiết", "Detail", new { id = item.id }) |
+                @Html.ActionLink("Xóa", "Delete", new { id = item.id })
+            </td>
+        </tr>
+    }
 
-            </table>
-            </div>
-</div>
-</div>
+</table>
+<!-- Pagination Links -->
+<style>
+    /* Trang chính */
+    .pagination .page-link {
+        background-color: #fff; /* Nền trắng */
+        color: #000; /* Chữ đen */
+        border: 1px solid #ddd; /* Viền xám nhạt */
+    }
+
+    /* Trang hiện tại */
+    .pagination .page-item.active .page-link {
+        background-color: #000; /* Nền đen */
+        color: #fff; /* Chữ trắng */
+        border: 1px solid #000; /* Viền đen */
+    }
+
+    /* Trang không hoạt động */
+    .pagination .page-item.disabled .page-link {
+        background-color: #eee; /* Nền xám nhạt */
+        color: #999; /* Chữ xám */
+    }
+</style>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        @if (Model.PageCount > 1)
+        {
+            if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+            }
+
+            for (int i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+            }
+        }
+    </ul>
+</nav>

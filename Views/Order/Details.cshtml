@@ -1,0 +1,53 @@
+﻿@model IEnumerable<NguyenNhutDuy_2122110447.Context.Order_Detail>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Product.image)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Product.name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.qty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.amount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Order.dalivery_address)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.created_at)
+        </th>
+
+
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td class="w-25">
+            <img class="w-50" src="~/Content/images/items/@Html.DisplayFor(modelItem => item.Product.image)" />
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Product.name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.qty)
+        </td>
+        <td>
+            <p>@String.Format("{0:N0} VND", item.amount)</p>
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Order.dalivery_address)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.created_at)
+        </td>
+
+
+    </tr>
+}
+
+</table>

@@ -1,0 +1,155 @@
+﻿@model IEnumerable<NguyenNhutDuy_2122110447.Models.CartModel>
+@{
+    ViewBag.Title = "Index";
+    var db = new NguyenNhutDuy_2122110447.Context.Entities3();
+    if (Session["id"] == null)
+    {
+        Url.Action("Login", "User");
+    }
+    var dl = db.Users.Find(Session["id"]);
+}
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+    <div class="container">
+
+        <div class="row justify-content-center">
+            <main class="col-md-5">
+                <div class="card">
+                    <h1 class="m-2 text-center">Thanh toán</h1>
+                    <hr>
+                    <p class="ml-4 mt-2">Tên người nhận: @dl.name</p>
+                    <p class="ml-4">Địa chỉ: @dl.address</p>
+                    <p class="ml-4">Email: @dl.email</p>
+                    <form id="checkoutForm" action="@Url.Action("Checkout", "Checkout")" method="post">
+                        <input class="form-control ml-4" name="phoneNumber" style="width:420px" type="number" placeholder="Nhập sô điện thoại" required />
+
+                        <table class="table table-borderless table-shopping-cart" style="width:20px">
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+
+                                    <tr class="" id="product-@item.Product.id">
+                                        <td>
+                                            <figure class="itemside">
+                                                <div class="aside">
+                                                    <img src="~/Content/images/items/@item.Product.image" class="img-sm">
+                                                </div>
+                                                <figcaption class="info">
+                                                    <p class="title text-dark">@item.Product.name</p>
+
+                                                </figcaption>
+                                            </figure>
+                                        </td>
+                                        <td>
+                                            <div class="input-group mb-3 input-spinner">
+
+                                                <h1 class="form-control ipQuantity">@item.Quantity</h1>
+
+                                                @if (item.Product.price_sale == null || item.Product.price_sale == 0)
+                                                {
+                                                    <input type="hidden" class="productPrice" value="@item.Product.price" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="hidden" class="productPrice" value="@item.Product.price_sale" />
+                                                }
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="price-wrap">
+                                                @if (item.Product.price_sale == null || item.Product.price_sale == 0)
+                                                {
+                                                    <h6 class="price">@String.Format("{0:N0}", item.Product.price * item.Quantity)</h6>
+                                                    <small class="text-muted">@String.Format("{0:N0}", item.Product.price)</small>
+                                                }
+                                                else
+                                                {
+                                                    <h6 class="price">@String.Format("{0:N0}", item.Product.price_sale * item.Quantity)</h6>
+                                                    <small class="text-muted">@String.Format("{0:N0}", item.Product.price_sale)</small>
+                                                }
+
+                                            </div>
+                                        </td>
+
+                                    </tr>
+
+                                }
+
+
+
+
+                            </tbody>
+                        </table>
+                        <h5 class="ml-4">Phương thức thanh toán:</h5>
+
+                        <div class="form-group ml-4">
+                            <label><input type="radio" name="paymentMethod" value="qr" /> Thanh toán qua QR</label><br />
+                            <label><input type="radio" name="paymentMethod" value="bank" /> Chuyển khoản ngân hàng</label><br />
+                            <label><input type="radio" name="paymentMethod" value="cod" /> Thanh toán khi nhận hàng</label>
+                        </div>
+
+                        <div id="paymentDetails">
+                            <!-- Nội dung sẽ được hiển thị tùy vào phương thức thanh toán được chọn -->
+                            <div id="qrPayment" class="payment-option ml-5" style="display:none;">
+                                <img src="~/Content/images/items/Untitled.png" alt="QR Code" />
+                                <h5>Sau khi thanh toán thành công hãy ấn đặt hàng</h5>
+                            </div>
+
+                            <div id="bankPayment" class="payment-option ml-5" style="display:none;">
+                                <h6>Ngân hàng: VpBank</h6>
+                                <h6>Số tài khoản: 0329674062</h6>
+                                <h6>NGUYEN NHUT DUY</h6>
+                                <h5>Sau khi thanh toán thành công hãy ấn đặt hàng</h5>
+                            </div>
+
+                            <div id="codPayment" class="payment-option" style="display:none;">
+                                <!-- Không hiển thị gì cả -->
+                            </div>
+                        </div>
+
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                        <script type="text/javascript">
+                            $(document).ready(function () {
+                                $('input[name="paymentMethod"]').change(function () {
+                                    // Ẩn tất cả các tùy chọn thanh toán
+                                    $('.payment-option').hide();
+
+                                    // Hiển thị tùy chọn phù hợp dựa trên phương thức thanh toán được chọn
+                                    var selectedMethod = $(this).val();
+                                    if (selectedMethod === 'qr') {
+                                        $('#qrPayment').show();
+                                    } else if (selectedMethod === 'bank') {
+                                        $('#bankPayment').show();
+                                    } else if (selectedMethod === 'cod') {
+                                        $('#codPayment').show();
+                                    }
+                                });
+                            });
+                        </script>
+                        <input type="hidden" name="grandTotal" id="grandTotalInput" value="@ViewBag.Total" />
+                        <dl class="dlist-align ml-4">
+                            <dt>Tổng:</dt>
+                            <dd class="text-right mr-4" id="totalAmount">@String.Format("{0:N0} VND", ViewBag.Total)</dd>
+                        </dl>
+                        <dl class="dlist-align ml-4">
+                            <dt>Phí vận chuyển:</dt>
+                            <dd class="text-right mr-4">Miễn phí</dd>
+                        </dl>
+                        <dl class="dlist-align ml-4">
+                            <dt>Tổng tiền:</dt>
+                            <dd class="text-right h5 mr-4"><strong id="grandTotal">@String.Format("{0:N0} VND", ViewBag.Total)</strong></dd>
+                        </dl>
+                        <button type="submit" class="btn btn-primary mt-3 ml-4">Đặt hàng</button>
+                    </form>
+                    @*<a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-light"> <i class="fa fa-chevron-left"></i> Tiếp tục mua hàng </a>*@
+                </div> <!-- card.// -->
+
+               
+
+            </main> <!-- col.// -->
+        </div>
+
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->

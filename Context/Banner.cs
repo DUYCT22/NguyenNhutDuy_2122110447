@@ -12,12 +12,13 @@ namespace NguyenNhutDuy_2122110447.Context
     using System;
     using System.Collections.Generic;
     
-    public partial class Cart
+    public partial class Banner
     {
         public int id { get; set; }
-        public int product_id { get; set; }
-        public double price { get; set; }
-        public int user_id { get; set; }
-        public int qty { get; set; }
+        public string name { get; set; }
+        public string image { get; set; }
+        public string description { get; set; }
+        public Nullable<System.DateTime> created_at { get; set; }
+        public Nullable<System.DateTime> updated_at { get; set; }
     }
 }

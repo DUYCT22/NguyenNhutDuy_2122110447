@@ -1,169 +1,204 @@
 ﻿@model NguyenNhutDuy_2122110447.Context.User
-
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetchProvinces();
+        });
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        fetchProvinces();
-    });
+        // Fetch provinces
+        function fetchProvinces() {
+            fetch('https://esgoo.net/api-tinhthanh/1/0.htm')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error === 0 && data.data) {
+                        populateDropdown('provincesSelect', data.data, 'id', 'name');
+                        setupChangeListeners();
+                    } else {
+                        console.error('Error fetching provinces:', data.error_text);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
 
-    // Fetch provinces
-    function fetchProvinces() {
-        fetch('https://esgoo.net/api-tinhthanh/1/0.htm')
-            .then(response => response.json())
-            .then(data => {
-                if (data.error === 0 && data.data) {
-                    populateDropdown('provincesSelect', data.data, 'id', 'name');
-                    setupChangeListeners();
-                } else {
-                    console.error('Error fetching provinces:', data.error_text);
+        // Fetch districts
+        function fetchDistricts(provinceId) {
+            fetch(`https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error === 0 && data.data) {
+                        populateDropdown('districtsSelect', data.data, 'id', 'name');
+                        // Clear wards when districts change
+                        document.getElementById('wardsSelect').innerHTML = '<option value="">Chọn phường xã</option>';
+                        updateFullAddress(); // Update full address when districts change
+                    } else {
+                        console.error('Error fetching districts:', data.error_text);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Fetch wards
+        function fetchWards(districtId) {
+            fetch(`https://esgoo.net/api-tinhthanh/3/${districtId}.htm`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error === 0 && data.data) {
+                        populateDropdown('wardsSelect', data.data, 'id', 'name');
+                        updateFullAddress(); // Update full address when wards change
+                    } else {
+                        console.error('Error fetching wards:', data.error_text);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Populate dropdown with data
+        function populateDropdown(selectId, data, valueField, textField) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Chọn</option>'; // Default option
+            data.forEach(item => {
+                if (item[valueField] && item[textField]) {
+                    const option = document.createElement('option');
+                    option.value = item[valueField];
+                    option.textContent = item[textField];
+                    select.appendChild(option);
                 }
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
+            });
+        }
 
-    // Fetch districts
-    function fetchDistricts(provinceId) {
-        fetch(`https://esgoo.net/api-tinhthanh/2/${provinceId}.htm`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error === 0 && data.data) {
-                    populateDropdown('districtsSelect', data.data, 'id', 'name');
-                    // Clear wards when districts change
+        // Setup change listeners
+        function setupChangeListeners() {
+            document.getElementById('provincesSelect').addEventListener('change', function () {
+                const provinceId = this.value;
+                if (provinceId) {
+                    fetchDistricts(provinceId);
+                } else {
+                    // Clear districts and wards if no province selected
+                    document.getElementById('districtsSelect').innerHTML = '<option value="">Chọn quận huyện</option>';
                     document.getElementById('wardsSelect').innerHTML = '<option value="">Chọn phường xã</option>';
-                } else {
-                    console.error('Error fetching districts:', data.error_text);
+                    updateFullAddress();
                 }
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
+            });
 
-    // Fetch wards
-    function fetchWards(districtId) {
-        fetch(`https://esgoo.net/api-tinhthanh/3/${districtId}.htm`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error === 0 && data.data) {
-                    populateDropdown('wardsSelect', data.data, 'id', 'name');
+            document.getElementById('districtsSelect').addEventListener('change', function () {
+                const districtId = this.value;
+                if (districtId) {
+                    fetchWards(districtId);
                 } else {
-                    console.error('Error fetching wards:', data.error_text);
+                    // Clear wards if no district selected
+                    document.getElementById('wardsSelect').innerHTML = '<option value="">Chọn phường xã</option>';
+                    updateFullAddress();
                 }
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
+            });
 
-    // Populate dropdown with data
-    function populateDropdown(selectId, data, valueField, textField) {
-        const select = document.getElementById(selectId);
-        select.innerHTML = '<option value="">Chọn</option>'; // Default option
-        data.forEach(item => {
-            if (item[valueField] && item[textField]) {
-                const option = document.createElement('option');
-                option.value = item[valueField];
-                option.textContent = item[textField];
-                select.appendChild(option);
-            }
-        });
-    }
+            document.getElementById('wardsSelect').addEventListener('change', updateFullAddress);
+            document.getElementById('houseNumber').addEventListener('input', updateFullAddress);
+        }
 
-    // Setup change listeners
-    function setupChangeListeners() {
-        document.getElementById('provincesSelect').addEventListener('change', function () {
-            const provinceId = this.value;
-            if (provinceId) {
-                fetchDistricts(provinceId);
-            }
-        });
+        // Update full address
+        function updateFullAddress() {
+            const province = document.getElementById('provincesSelect').selectedOptions[0]?.text || '';
+            const district = document.getElementById('districtsSelect').selectedOptions[0]?.text || '';
+            const ward = document.getElementById('wardsSelect').selectedOptions[0]?.text || '';
+            const houseNumber = document.getElementById('houseNumber').value || '';
 
-        document.getElementById('districtsSelect').addEventListener('change', function () {
-            const districtId = this.value;
-            if (districtId) {
-                fetchWards(districtId);
-            }
-        });
-    }
-</script>
-<section class="section-content padding-y">
+            const fullAddress = [houseNumber, ward, district, province]
+                .filter(part => part)  // Remove empty parts
+                .join(', ');
 
-    <!-- ============================ COMPONENT REGISTER   ================================= -->
-    <div class="card mx-auto" style="max-width:520px; margin-top:40px;">
-        <article class="card-body">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <header class="mb-4"><h4 class="card-title">Đăng ký</h4></header>
-            <form>
-                <div class="form-row">
-                    <div class="col form-group">
-                        <label>Họ và tên</label>
-                        @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Họ và tên" } })
-                        @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+            document.getElementById('fullAddress').value = fullAddress;
+        }
+    </script>
+
+    <section class="section-content padding-y">
+        <!-- ============================ COMPONENT REGISTER   ================================= -->
+        <div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+            <article class="card-body">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <header class="mb-4"><h4 class="card-title">Đăng ký</h4></header>
+                <form>
+                    <div class="form-row">
+                        <div class="col form-group">
+                            <label>Họ và tên</label>
+                            @Html.EditorFor(model => model.name, new { htmlAttributes = new { @class = "form-control", @placeholder = "Họ và tên" } })
+                            @Html.ValidationMessageFor(model => model.name, "", new { @class = "text-danger" })
+                        </div> <!-- form-group end.// -->
+                    </div> <!-- form-row end.// -->
+                    <div class="form-group">
+                        <label>Email</label>
+                        @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email" } })
+                        @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
+                        <small class="form-text text-muted">Chúng tôi sẽ không bao giờ chia sẻ email của bạn với bất kỳ ai khác.</small>
                     </div> <!-- form-group end.// -->
-                </div> <!-- form-row end.// -->
-                <div class="form-group">
-                    <label>Email</label>
-                    @Html.EditorFor(model => model.email, new { htmlAttributes = new { @class = "form-control", @placeholder = "Email" } })
-                    @Html.ValidationMessageFor(model => model.email, "", new { @class = "text-danger" })
-                    <small class="form-text text-muted">Chúng tôi sẽ không bao giờ chia sẻ email của bạn với bất kỳ ai khác.</small>
-                </div> <!-- form-group end.// -->
-                <div class="form-group">
-                    <label class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input" checked="" type="radio" name="gender" value="option1">
-                        <span class="custom-control-label"> Nam </span>
-                    </label>
-                    <label class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input" type="radio" name="gender" value="option2">
-                        <span class="custom-control-label"> Nữ </span>
-                    </label>
-                </div> <!-- form-group end.// -->
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="provincesSelect">Tỉnh</label>
-                        <select id="provincesSelect" class="form-control">
-                            <option value="">Chọn tỉnh</option>
-                        </select>
+                    <div class="form-group">
+                        <label class="custom-control custom-radio custom-control-inline">
+                            @Html.RadioButtonFor(model => model.gender, "Nam", new { @class = "custom-control-input" })
+                            <span class="custom-control-label"> Nam </span>
+                        </label>
+                        <label class="custom-control custom-radio custom-control-inline">
+                            @Html.RadioButtonFor(model => model.gender, "Nữ", new { @class = "custom-control-input" })
+                            <span class="custom-control-label"> Nữ </span>
+                        </label>
                     </div> <!-- form-group end.// -->
-                    <div class="form-group col-md-6">
-                        <label for="districtsSelect">Quận huyện</label>
-                        <select id="districtsSelect" class="form-control">
-                            <option value="">Chọn quận huyện</option>
-                        </select>
-                    </div> <!-- form-group end.// -->
-                    <div class="form-group col-md-6">
-                        <label for="wardsSelect">Phường xã</label>
-                        <select id="wardsSelect" class="form-control">
-                            <option value="">Chọn phường xã</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="provincesSelect">Tỉnh</label>
+                            <select id="provincesSelect" name="province" class="form-control">
+                                <option value="">Chọn tỉnh</option>
+                            </select>
+                        </div> <!-- form-group end.// -->
+                        <div class="form-group col-md-6">
+                            <label for="districtsSelect">Quận huyện</label>
+                            <select id="districtsSelect" name="district" class="form-control">
+                                <option value="">Chọn quận huyện</option>
+                            </select>
+                        </div> <!-- form-group end.// -->
+                        <div class="form-group col-md-6">
+                            <label for="wardsSelect">Phường xã</label>
+                            <select id="wardsSelect" name="ward" class="form-control">
+                                <option value="">Chọn phường xã</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Số nhà, Hẻm, Đường</label>
+                            <input id="houseNumber" name="houseNumber" class="form-control" placeholder="vd: 115/5, đường số 11" />
+                        </div>
+                    </div> <!-- form-row.// -->
+
+                    <input type="hidden" id="fullAddress" name="address" />
+                    <div class="form-row">
+                        @Html.LabelFor(model => model.image, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-12">
+                            <input type="file" value="@Html.EditorFor(model => model.image, new { htmlAttributes = new { @class = "form-control" } })" />
+                            @Html.ValidationMessageFor(model => model.image, "", new { @class = "text-danger" })
+                        </div>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label> Số nhà, Hẻm, Đường</label>
-                        <input class="form-control" value="" placeholder="vd: 115/5, đường số 11    " />
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Mật khẩu</label>
+                            <input class="form-control" type="password">
+                        </div> <!-- form-group end.// -->
+                        <div class="form-group col-md-6">
+                            <label>Xác nhận mât khẩu</label>
+                            @Html.EditorFor(model => model.password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
+                            @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+                        </div> <!-- form-group end.// -->
                     </div>
-                </div> <!-- form-row.// -->
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label>Mật khẩu</label>
-                        <input class="form-control" type="password">
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-primary btn-block" value="Đăng ký" />
+                    </div> <!-- form-group// -->
+                    <div class="form-group">
+                        <label class="custom-control custom-checkbox"> <input type="checkbox" class="custom-control-input" checked=""> <div class="custom-control-label"> Tôi đồng ý với các <a href="#">Điều khoản</a>  </div> </label>
                     </div> <!-- form-group end.// -->
-                    <div class="form-group col-md-6">
-                        <label>Xác nhận mât khẩu</label>
-                        @Html.EditorFor(model => model.password, new { htmlAttributes = new { @class = "form-control", @type = "password" } })
-                        @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
-                    </div> <!-- form-group end.// -->
-                </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary btn-block" value="Đăng ký"/>
-                </div> <!-- form-group// -->
-                <div class="form-group">
-                    <label class="custom-control custom-checkbox"> <input type="checkbox" class="custom-control-input" checked=""> <div class="custom-control-label"> Tôi đồng ý với các <a href="#">Điều khoản</a>  </div> </label>
-                </div> <!-- form-group end.// -->
-            </form>
-        </article><!-- card-body.// -->
-    </div> <!-- card .// -->
-    <p class="text-center mt-4">Bạn có tài khoản? <a href="@Url.Action("Login", "User")">Đăng nhập</a></p>
-    <br><br>
-    <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+                </form>
+            </article><!-- card-body.// -->
+        </div> <!-- card .// -->
+        <p class="text-center mt-4">Bạn có tài khoản? <a href="@Url.Action("Login", "User")">Đăng nhập</a></p>
+        <br><br>
+        <!-- ============================ COMPONENT REGISTER  END.// ================================= -->
 
 
-</section>
+    </section>
 }

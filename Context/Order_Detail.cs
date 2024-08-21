@@ -15,9 +15,13 @@ namespace NguyenNhutDuy_2122110447.Context
     public partial class Order_Detail
     {
         public int id { get; set; }
-        public int order_id { get; set; }
-        public int product_id { get; set; }
-        public int qty { get; set; }
-        public double total_price { get; set; }
+        public Nullable<int> order_id { get; set; }
+        public Nullable<int> product_id { get; set; }
+        public Nullable<int> qty { get; set; }
+        public Nullable<decimal> amount { get; set; }
+        public Nullable<System.DateTime> created_at { get; set; }
+    
+        public virtual Order Order { get; set; }
+        public virtual Product Product { get; set; }
     }
 }

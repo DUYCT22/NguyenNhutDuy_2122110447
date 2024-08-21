@@ -1,6 +1,8 @@
 ﻿@{ 
-    var db = new NguyenNhutDuy_2122110447.Context.ASPEntities2();
+    var db = new NguyenNhutDuy_2122110447.Context.Entities3();
     var Cate = db.Categories.ToList();
+    var Bra = db.Brands.ToList();
+    string yt = "https://www.youtube.com/@duyot-71";
 }
 
 <!DOCTYPE html>
@@ -42,12 +44,11 @@
                         <form action="#" class="search-header">
                             <div class="input-group w-100">
                                 <select class="custom-select border-right" name="category_name">
-                                    <option value="">All type</option>
-                                    <option value="codex">Special</option>
-                                    <option value="comments">Only best</option>
-                                    <option value="content">Latest</option>
+                                    <option value="">Sản phẩm</option>
+                                    <option value="codex">Danh mục</option>
+                                    <option value="comments">Thương hiệu</option>
                                 </select>
-                                <input type="text" class="form-control" placeholder="Search">
+                                <input type="text" class="form-control" placeholder="Tìm kiếm....">
 
                                 <div class="input-group-append">
                                     <button class="btn btn-primary" type="submit">
@@ -70,7 +71,11 @@
                                 </a>
                             </div>
                             <div class="widget-header mr-3">
-                                <a href="#" class="widget-view">
+                                <a href="@if (Session["id"] == null) {
+                                    @Url.Action("Login", "User", new { area = "" })
+                                } else {
+                                    @Url.Action("Index", "Order", new { area = "" })
+                                } " class="widget-view">
                                     <div class="icon-area">
                                         <i class="fa fa-store"></i>
                                     </div>
@@ -155,24 +160,12 @@
                             <a class="nav-link" href="@Url.Action("Index", "Category")">Tất cả danh mục</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Dịch vụ</a>
+                            <a class="nav-link" href="@Url.Action("Index", "Brand")">Tất cả thương hiệu</a>
                         </li>
-
-
-                    </ul>
-                    <ul class="navbar-nav ml-md-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Get the app</a>
+                            <a class="nav-link" href="@Url.Action("Index", "Product")">Tất cả sản phẩm</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="http://example.com" data-toggle="dropdown">VietNam</a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">English</a>
-                                <a class="dropdown-item" href="#">French</a>
-                                <a class="dropdown-item" href="#">Spanish</a>
-                                <a class="dropdown-item" href="#">Chinese</a>
-                            </div>
-                        </li>
+
                     </ul>
                 </div> <!-- collapse .// -->
             </div> <!-- container .// -->
@@ -194,50 +187,31 @@
             <section class="footer-top padding-y-lg text-white">
                 <div class="row">
                     <aside class="col-md col-6">
-                        <h6 class="title">Brands</h6>
+                        <h6 class="title">Thương hiệu</h6>
                         <ul class="list-unstyled">
-                            <li> <a href="#">Adidas</a></li>
-                            <li> <a href="#">Puma</a></li>
-                            <li> <a href="#">Reebok</a></li>
-                            <li> <a href="#">Nike</a></li>
+                            @foreach(var item in Bra.Take(5))
+                            {
+                                 <li> <a href="@Url.Action("ProductByBrand", "Brand", new {id = item.id})">@item.name</a></li>
+                            }
+                            
                         </ul>
                     </aside>
                     <aside class="col-md col-6">
-                        <h6 class="title">Company</h6>
+                        <h6 class="title">Dang mục</h6>
                         <ul class="list-unstyled">
-                            <li> <a href="#">About us</a></li>
-                            <li> <a href="#">Career</a></li>
-                            <li> <a href="#">Find a store</a></li>
-                            <li> <a href="#">Rules and terms</a></li>
-                            <li> <a href="#">Sitemap</a></li>
+                            @foreach (var item in Cate.Take(5))
+                            {
+                                <li> <a href="@Url.Action("ProductByCategory", "Category", new {id = item.id})">@item.name</a></li>
+                            }
                         </ul>
                     </aside>
-                    <aside class="col-md col-6">
-                        <h6 class="title">Help</h6>
-                        <ul class="list-unstyled">
-                            <li> <a href="#">Contact us</a></li>
-                            <li> <a href="#">Money refund</a></li>
-                            <li> <a href="#">Order status</a></li>
-                            <li> <a href="#">Shipping info</a></li>
-                            <li> <a href="#">Open dispute</a></li>
-                        </ul>
-                    </aside>
-                    <aside class="col-md col-6">
-                        <h6 class="title">Account</h6>
-                        <ul class="list-unstyled">
-                            <li> <a href="#"> User Login </a></li>
-                            <li> <a href="#"> User register </a></li>
-                            <li> <a href="#"> Account Setting </a></li>
-                            <li> <a href="#"> My Orders </a></li>
-                        </ul>
-                    </aside>
+                   
+                  
                     <aside class="col-md">
-                        <h6 class="title">Social</h6>
+                        <h6 class="title">Mạng Xã Hội</h6>
                         <ul class="list-unstyled">
-                            <li><a href="#"> <i class="fab fa-facebook"></i> Facebook </a></li>
-                            <li><a href="#"> <i class="fab fa-twitter"></i> Twitter </a></li>
-                            <li><a href="#"> <i class="fab fa-instagram"></i> Instagram </a></li>
-                            <li><a href="#"> <i class="fab fa-youtube"></i> Youtube </a></li>
+                            <li><a href="https://www.facebook.com/DuyNguyenOt/"> <i class="fab fa-facebook"></i> Facebook </a></li>
+                            <li><a href="@yt"> <i class="fab fa-youtube"></i> Youtube </a></li>
                         </ul>
                     </aside>
                 </div> <!-- row.// -->

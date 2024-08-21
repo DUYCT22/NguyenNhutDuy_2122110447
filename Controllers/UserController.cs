@@ -2,6 +2,7 @@
 using NguyenNhutDuy_2122110447.Context;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -12,7 +13,7 @@ namespace NguyenNhutDuy_2122110447.Controllers
 {
     public class UserController : Controller
     {
-        ASPEntities2 asp = new ASPEntities2();
+        Entities3 asp = new Entities3();
         // GET: User
         public ActionResult Register()
         {
@@ -25,10 +26,12 @@ namespace NguyenNhutDuy_2122110447.Controllers
             try
             {
                 objuser.password = CreateMD5(objuser.password);
+                objuser.created_at = DateTime.Now;
+                objuser.role = 0;
                 asp.Users.Add(objuser);
                 asp.SaveChanges();
             }
-            catch (Exception)
+            catch (DbEntityValidationException e)
             {
                 throw;
             }
@@ -45,6 +48,7 @@ namespace NguyenNhutDuy_2122110447.Controllers
             var Flag = asp.Users.Where(n=>n.email == objuser.email && n.password == objuser.password).ToList();
             if (Flag.Count > 0) {
                 Session["email"] = Flag.FirstOrDefault().email.ToString();
+                Session["id"] = Flag.FirstOrDefault().id;
             }
             return RedirectToAction("Index", "Home");
         }
@@ -73,6 +77,12 @@ namespace NguyenNhutDuy_2122110447.Controllers
                 }
                 return sb.ToString();
             }
+        }
+        public ActionResult Profile(int id)
+        {
+            User dl = asp.Users.Find(id);
+            dl.ToString();
+            return View();
         }
     }
 }

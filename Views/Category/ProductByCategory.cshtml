@@ -1,5 +1,7 @@
-﻿@{
-    var products = ViewBag.Products as List<NguyenNhutDuy_2122110447.Context.Product>;
+﻿@using PagedList.Mvc;
+@using PagedList;
+@{
+    var products = ViewBag.Products as PagedList.IPagedList<NguyenNhutDuy_2122110447.Context.Product>;
     var viewMode = ViewBag.ViewMode as string;
 }
 <section class="section-content padding-y">
@@ -7,79 +9,7 @@
 
 
         <!-- ============================  FILTER TOP  ================================= -->
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2"> Your are here: </div> <!-- col.// -->
-                    <nav class="col-md-8">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Category name</a></li>
-                            <li class="breadcrumb-item"><a href="#">Sub category</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Items</li>
-                        </ol>
-                    </nav> <!-- col.// -->
-                </div> <!-- row.// -->
-                <hr>
-                <div class="row">
-                    <div class="col-md-2">Filter by</div> <!-- col.// -->
-                    <div class="col-md-10">
-                        <ul class="list-inline">
-                            <li class="list-inline-item mr-3 dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">   Supplier type </a>
-                                <div class="dropdown-menu p-3" style="max-width:400px;">
-                                    <label class="form-check">
-                                        <input type="radio" name="myfilter" class="form-check-input"> Good supplier
-                                    </label>
-                                    <label class="form-check">
-                                        <input type="radio" name="myfilter" class="form-check-input"> Best supplier
-                                    </label>
-                                    <label class="form-check">
-                                        <input type="radio" name="myfilter" class="form-check-input"> New supplier
-                                    </label>
-                                </div> <!-- dropdown-menu.// -->
-                            </li>
-                            <li class="list-inline-item mr-3 dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">  Country </a>
-                                <div class="dropdown-menu p-3">
-                                    <label class="form-check"> 	 <input type="checkbox" class="form-check-input"> China    </label>
-                                    <label class="form-check">   	 <input type="checkbox" class="form-check-input"> Japan      </label>
-                                    <label class="form-check">    <input type="checkbox" class="form-check-input"> Uzbekistan  </label>
-                                    <label class="form-check">  <input type="checkbox" class="form-check-input"> Russia     </label>
-                                </div> <!-- dropdown-menu.// -->
-                            </li>
-                            <li class="list-inline-item mr-3 dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Feature</a>
-                                <div class="dropdown-menu">
-                                    <a href="" class="dropdown-item">Anti backterial</a>
-                                    <a href="" class="dropdown-item">With buttons</a>
-                                    <a href="" class="dropdown-item">Extra safety</a>
-                                </div>
-                            </li>
-                            <li class="list-inline-item mr-3"><a href="#">Color</a></li>
-                            <li class="list-inline-item mr-3"><a href="#">Size</a></li>
-                            <li class="list-inline-item mr-3">
-                                <div class="form-inline">
-                                    <label class="mr-2">Price</label>
-                                    <input class="form-control form-control-sm" placeholder="Min" type="number">
-                                    <span class="px-2"> - </span>
-                                    <input class="form-control form-control-sm" placeholder="Max" type="number">
-                                    <button type="submit" class="btn btn-sm btn-light ml-2">Ok</button>
-                                </div>
-                            </li>
-                            <li class="list-inline-item mr-3">
-                                <label class="custom-control mt-1 custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input">
-                                    <div class="custom-control-label">
-                                        Ready to ship
-                                    </div>
-                                </label>
-                            </li>
-                        </ul>
-                    </div> <!-- col.// -->
-                </div> <!-- row.// -->
-            </div> <!-- card-body .// -->
-        </div> <!-- card.// -->
+        
         <!-- ============================ FILTER TOP END.// ================================= -->
 
         <header class="mb-3">
@@ -112,7 +42,16 @@
                             <figcaption class="info-wrap">
                                 <a href="@Url.Action("Detail", "Product", new { id = item.id })" class="title mb-2">@item.name</a>
                                 <div class="price-wrap">
-                                    <span class="price">@String.Format("{0:N0} VND", item.price_sale)</span>
+                                    <span class="price">
+                                        @if (item.price_sale == null || item.price_sale == 0)
+                                        {
+                                            @String.Format("{0:N0} VND", item.price)
+                                        }
+                                        else
+                                        {
+                                            @String.Format("{0:N0} VND", item.price_sale)
+                                        }
+                                    </span>
                                     <small class="text-muted">/per item</small>
                                 </div>
                                 <p class="mb-2"> 2 Pieces <small class="text-muted">(Min Order)</small></p>
@@ -129,7 +68,7 @@
                     <article class="card card-product-list">
                         <div class="row no-gutters">
                             <aside class="col-md-3">
-                                <a href="#" class="img-wrap">
+                                <a href="@Url.Action("Detail", "Product", new { id = item.id })" class="img-wrap">
                                     <span class="badge badge-danger"> NEW </span>
                                     <img src="~/Content/images/items/@item.image">
                                 </a>
@@ -169,7 +108,17 @@
                             <aside class="col-sm-3">
                                 <div class="info-aside">
                                     <div class="price-wrap">
-                                        <span class="h5 price">@String.Format("{0:N0} VND", item.price_sale)</span>
+                                        <span class="h5 price">
+                                            @if (item.price_sale == null || item.price_sale == 0)
+                                            {
+                                                @String.Format("{0:N0} VND", item.price)
+                                            }
+                                            else
+                                            {
+                                                @String.Format("{0:N0} VND", item.price_sale)
+                                            }
+                                        </span>
+
                                         <small class="text-muted">/per item</small>
                                     </div> <!-- price-wrap.// -->
                                     <small class="text-warning">Paid shipping</small>
@@ -196,49 +145,80 @@
         </div>
 
 
-        <nav class="mb-4" aria-label="Page navigation sample">
-            <ul class="pagination">
-                <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                <li class="page-item"><a class="page-link" href="#">5</a></li>
-                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        <!-- Pagination Links -->
+        <style>
+            /* Trang chính */
+            .pagination .page-link {
+                background-color: #fff; /* Nền trắng */
+                color: #000; /* Chữ đen */
+                border: 1px solid #ddd; /* Viền xám nhạt */
+            }
+
+            /* Trang hiện tại */
+            .pagination .page-item.active .page-link {
+                background-color: #000; /* Nền đen */
+                color: #fff; /* Chữ trắng */
+                border: 1px solid #000; /* Viền đen */
+            }
+
+            /* Trang không hoạt động */
+            .pagination .page-item.disabled .page-link {
+                background-color: #eee; /* Nền xám nhạt */
+                color: #999; /* Chữ xám */
+            }
+        </style>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                @if (products.PageCount > 1)
+                {
+                    if (products.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("ProductByCategory", new { page = products.PageNumber - 1, id = ViewBag.CategoryId, viewMode = ViewBag.ViewMode })" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&laquo;</span>
+                        </li>
+                    }
+
+                    for (int i = 1; i <= products.PageCount; i++)
+                    {
+                        <li class="page-item @(products.PageNumber == i ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("ProductByCategory", new { page = i, id = ViewBag.CategoryId, viewMode = ViewBag.ViewMode })">@i</a>
+                        </li>
+                    }
+
+                    if (products.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("ProductByCategory", new { page = products.PageNumber + 1, id = ViewBag.CategoryId, viewMode = ViewBag.ViewMode })" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&raquo;</span>
+                        </li>
+                    }
+                }
             </ul>
         </nav>
 
 
-        <div class="box text-center">
-            <p>Did you find what you were looking for？</p>
-            <a href="" class="btn btn-light">Yes</a>
-            <a href="" class="btn btn-light">No</a>
-        </div>
+
+
+
 
     </div> <!-- container .//  -->
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 <!-- ========================= SECTION SUBSCRIBE  ========================= -->
-<section class="padding-y-lg bg-light border-top">
-    <div class="container">
-
-        <p class="pb-2 text-center">Delivering the latest product trends and industry news straight to your inbox</p>
-
-        <div class="row justify-content-md-center">
-            <div class="col-lg-4 col-sm-6">
-                <form class="form-row">
-                    <div class="col-8">
-                        <input class="form-control" placeholder="Your Email" type="email">
-                    </div> <!-- col.// -->
-                    <div class="col-4">
-                        <button type="submit" class="btn btn-block btn-warning"> <i class="fa fa-envelope"></i> Subscribe </button>
-                    </div> <!-- col.// -->
-                </form>
-                <small class="form-text">We’ll never share your email address with a third-party. </small>
-            </div> <!-- col-md-6.// -->
-        </div>
-
-
-    </div>
-</section>
 <!-- ========================= SECTION SUBSCRIBE END// ========================= -->

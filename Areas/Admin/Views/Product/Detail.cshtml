@@ -1,0 +1,92 @@
+﻿@model NguyenNhutDuy_2122110447.Context.Product
+
+<div>
+    <h4>Product</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <p>Tên</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.name)
+        </dd>
+
+        <dt>
+            <p>Ảnh</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.image)
+        </dd>
+
+        <dt>
+            <p>Giá</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.price)
+        </dd>
+
+        <dt>
+            <p>Giá giảm</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.price_sale)
+        </dd>
+
+        <dt>
+            <p>Số lượng</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.qty)
+        </dd>
+
+        <dt>
+            <p>Tạo lúc</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.created_at)
+        </dd>
+
+        <dt>
+            <p>Cập nhật</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.updated_at)
+        </dd>
+
+        <dt>
+            <p>Chi tiết</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.detail)
+        </dd>
+
+        <dt>
+            <p>Thương hiệu</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Brand.name)
+        </dd>
+
+        <dt>
+            <p>Danh mục</p>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Category.name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+
+    @Html.ActionLink("Quay lại", "Index")
+</p>

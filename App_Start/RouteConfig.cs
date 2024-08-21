@@ -68,6 +68,26 @@ namespace NguyenNhutDuy_2122110447
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Category", action = "ProductByCategory", id = UrlParameter.Optional }
             );
+            routes.MapRoute(
+               name: "Checkout",
+               url: "{controller}/{action}/{id}",
+               defaults: new { controller = "Checkout", action = "Index", id = UrlParameter.Optional }
+           );
+            routes.MapRoute(
+              name: "Order",
+              url: "{controller}/{action}/{id}",
+              defaults: new { controller = "Order", action = "Index", id = UrlParameter.Optional }
+          );
+            routes.MapRoute(
+              name: "OrderDetail",
+              url: "{controller}/{action}/{id}",
+              defaults: new { controller = "Order", action = "Details", id = UrlParameter.Optional }
+          );
+            routes.MapRoute(
+            name: "ProductByBrand",
+            url: "{controller}/{action}/{id}",
+            defaults: new { controller = "Brand", action = "ProductByBrand", id = UrlParameter.Optional }
+        );
         }
     }
 }

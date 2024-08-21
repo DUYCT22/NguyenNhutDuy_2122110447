@@ -1,0 +1,223 @@
+﻿@using PagedList.Mvc;
+@using PagedList;
+@{
+    var products = ViewBag.Products as PagedList.IPagedList<NguyenNhutDuy_2122110447.Context.Product>;
+    var viewMode = ViewBag.ViewMode as string;
+}
+<section class="section-content padding-y">
+    <div class="container">
+
+
+        <!-- ============================  FILTER TOP  ================================= -->
+        <!-- ============================ FILTER TOP END.// ================================= -->
+
+        <header class="mb-3">
+            <div class="form-inline">
+                <strong class="mr-md-auto">@products.Count() sản phẩm</strong>
+                <div class="btn-group">
+                    <!-- Link to Grid View -->
+                    <a href="@Url.Action("Index", new { id = ViewBag.CategoryId, viewMode = "grid" })" class="btn btn-light @(ViewBag.ViewMode == "grid" ? "active" : "")" data-toggle="tooltip" title="Grid view">
+                        <i class="fa fa-th"></i>
+                    </a>
+                    <!-- Link to List View -->
+                    <a href="@Url.Action("Index", new { id = ViewBag.CategoryId, viewMode = "list" })" class="btn btn-light @(ViewBag.ViewMode == "list" ? "active" : "")" data-toggle="tooltip" title="List view">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="row @((viewMode == "list") ? "list-view" : "grid-view")">
+            @if (viewMode == "grid")
+            {
+                foreach (var item in products)
+                {
+                    <div class="col-md-3">
+                        <figure class="card card-product-grid">
+                            <div class="img-wrap">
+                                <span class="badge badge-danger"> NEW </span>
+                                <img src="~/Content/images/items/@item.image">
+                            </div>
+                            <figcaption class="info-wrap">
+                                <a href="@Url.Action("Detail", "Product", new { id = item.id })" class="title mb-2">@item.name</a>
+                                <div class="price-wrap">
+                                    <span class="price">
+                                        @if (item.price_sale == null || item.price_sale == 0)
+                                        {
+                                            @String.Format("{0:N0} VND", item.price)
+                                        }
+                                        else
+                                        {
+                                            @String.Format("{0:N0} VND", item.price_sale)
+                                        }
+                                    </span>
+                                    <small class="text-muted">/per item</small>
+                                </div>
+                                <p class="mb-2"> 2 Pieces <small class="text-muted">(Min Order)</small></p>
+                            </figcaption>
+                        </figure>
+                    </div>
+                }
+            }
+            else
+            {
+                foreach (var item in products)
+                {
+
+                    <article class="card card-product-list">
+                        <div class="row no-gutters">
+                            <aside class="col-md-3">
+                                <a href="@Url.Action("Detail", "Product", new { id = item.id })" class="img-wrap">
+                                    <span class="badge badge-danger"> NEW </span>
+                                    <img src="~/Content/images/items/@item.image">
+                                </a>
+                            </aside> <!-- col.// -->
+                            <div class="col-md-6">
+                                <div class="info-main">
+                                    <a href="@Url.Action("Detail", "Product", new { id = item.id })" class="h5 title"> @item.name</a>
+                                    <div class="rating-wrap mb-2">
+                                        <ul class="rating-stars">
+                                            <li style="width:100%" class="stars-active">
+                                                <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                            </li>
+                                            <li>
+                                                <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                            </li>
+                                        </ul>
+                                        <div class="label-rating">9/10</div>
+                                    </div> <!-- rating-wrap.// -->
+
+                                    <p class="mb-3">
+                                        <span class="tag"> <i class="fa fa-check"></i> Verified</span>
+                                        <span class="tag"> 5 Years </span>
+                                        <span class="tag"> 80 reviews </span>
+                                        <span class="tag"> Russia </span>
+                                    </p>
+
+                                    <p>
+                                        @item.detail
+                                    </p>
+
+                                </div> <!-- info-main.// -->
+                            </div> <!-- col.// -->
+                            <aside class="col-sm-3">
+                                <div class="info-aside">
+                                    <div class="price-wrap">
+                                        <span class="h5 price">
+                                            @if (item.price_sale == null || item.price_sale == 0)
+                                            {
+                                                @String.Format("{0:N0} VND", item.price)
+                                            }
+                                            else
+                                            {
+                                                @String.Format("{0:N0} VND", item.price_sale)
+                                            }
+                                        </span>
+
+                                        <small class="text-muted">/per item</small>
+                                    </div> <!-- price-wrap.// -->
+                                    <small class="text-warning">Paid shipping</small>
+
+                                    <p class="text-muted mt-3">Grand textile Co</p>
+                                    <p class="mt-3">
+                                        <a href="#" class="btn btn-outline-primary"> <i class="fa fa-envelope"></i> Contact supplier </a>
+                                        <a href="#" class="btn btn-light"><i class="fa fa-heart"></i> Save </a>
+                                    </p>
+
+                                    <label class="custom-control mt-3 custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input">
+                                        <div class="custom-control-label">
+                                            Add to compare
+                                        </div>
+                                    </label>
+
+                                </div> <!-- info-aside.// -->
+                            </aside> <!-- col.// -->
+                        </div> <!-- row.// -->
+                    </article> <!-- card-product .// -->
+                }
+            }
+        </div>
+
+
+        <!-- Pagination Links -->
+        <style>
+            /* Trang chính */
+            .pagination .page-link {
+                background-color: #fff; /* Nền trắng */
+                color: #000; /* Chữ đen */
+                border: 1px solid #ddd; /* Viền xám nhạt */
+            }
+
+            /* Trang hiện tại */
+            .pagination .page-item.active .page-link {
+                background-color: #000; /* Nền đen */
+                color: #fff; /* Chữ trắng */
+                border: 1px solid #000; /* Viền đen */
+            }
+
+            /* Trang không hoạt động */
+            .pagination .page-item.disabled .page-link {
+                background-color: #eee; /* Nền xám nhạt */
+                color: #999; /* Chữ xám */
+            }
+        </style>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                @if (products.PageCount > 1)
+                {
+                    if (products.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { page = products.PageNumber - 1, id = ViewBag.CategoryId, viewMode = ViewBag.ViewMode })" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&laquo;</span>
+                        </li>
+                    }
+
+                    for (int i = 1; i <= products.PageCount; i++)
+                    {
+                        <li class="page-item @(products.PageNumber == i ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, id = ViewBag.CategoryId, viewMode = ViewBag.ViewMode })">@i</a>
+                        </li>
+                    }
+
+                    if (products.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { page = products.PageNumber + 1, id = ViewBag.CategoryId, viewMode = ViewBag.ViewMode })" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item disabled">
+                            <span class="page-link" aria-hidden="true">&raquo;</span>
+                        </li>
+                    }
+                }
+            </ul>
+        </nav>
+
+
+
+
+
+
+    </div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+<!-- ========================= SECTION SUBSCRIBE  ========================= -->
+<!-- ========================= SECTION SUBSCRIBE END// ========================= -->

@@ -52,25 +52,6 @@
             $('#grandTotal').text(grandTotal.toLocaleString('en-US'));
         }
 
-        // Xử lý sự kiện tăng giảm số lượng
-        $(document).on('click', '.button-minus', function () {
-            let row = $(this).closest('tr');
-            let quantity = parseInt(row.find('.ipQuantity').val());
-            if (quantity > 1) {
-                row.find('.ipQuantity').val(quantity - 1);
-                updatePrice(row);
-            } else {
-                alert("Số lượng không thể nhỏ hơn 1!");
-            }
-        });
-
-        $(document).on('click', '.button-plus', function () {
-            let row = $(this).closest('tr');
-            let quantity = parseInt(row.find('.ipQuantity').val());
-            row.find('.ipQuantity').val(quantity + 1);
-            updatePrice(row);
-        });
-
         // Gọi hàm cập nhật tổng khi tải trang lần đầu
         updateTotal();
     });
@@ -113,23 +94,35 @@
                                                     <p class="text-muted small">Size: XL, Color: blue, <br> Brand: Gucci</p>
                                                 </figcaption>
                                             </figure>
+                                            <input type="hidden" class="productAvailableQuantity" value="@item.AvailableQuantity" />
                                         </td>
                                         <td>
                                             <div class="input-group mb-3 input-spinner">
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-light button-minus" type="button"> - </button>
-                                                </div>
-                                                <input type="text" class="form-control ipQuantity" value="@item.Quantity" readonly />
-                                                <div class="input-group-prepend">
-                                                    <button class="btn btn-light button-plus" type="button"> + </button>
-                                                </div>
-                                                <input type="hidden" class="productPrice" value="@item.Product.price_sale" />
+                                                <p class="form-control ipQuantity">@item.Quantity</p>
+                                                @if (item.Product.price_sale == null || item.Product.price_sale == 0)
+                                                {
+                                                    <input type="hidden" class="productPrice" value="@item.Product.price" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="hidden" class="productPrice" value="@item.Product.price_sale" />
+                                                }
+
                                             </div>
                                         </td>
                                         <td>
                                             <div class="price-wrap">
-                                                <h6 class="price">@String.Format("{0:N0}", item.Product.price_sale * item.Quantity)</h6>
-                                                <small class="text-muted">@String.Format("{0:N0}", item.Product.price_sale)</small>
+                                                @if (item.Product.price_sale == null || item.Product.price_sale == 0)
+                                                {
+                                                    <h6 class="price">@String.Format("{0:N0}", item.Product.price * item.Quantity)</h6>
+                                                    <small class="text-muted">@String.Format("{0:N0}", item.Product.price)</small>
+                                                }
+                                                else
+                                                {
+                                                    <h6 class="price">@String.Format("{0:N0}", item.Product.price_sale * item.Quantity)</h6>
+                                                    <small class="text-muted">@String.Format("{0:N0}", item.Product.price_sale)</small>
+                                                }
+
                                             </div>
                                         </td>
                                         <td class="text-right">
@@ -181,7 +174,7 @@
                     </div> <!-- card-body.// -->
                     @if (Session["cart"] != null)
                     {
-                        <a href="@Url.Action("ThanhToan", "GioHang")" class="btn btn-primary">Thanh toán</a>
+                        <a href="@Url.Action("Index", "Checkout")" class="btn btn-primary">Thanh toán</a>
                     }
                     else
                     {

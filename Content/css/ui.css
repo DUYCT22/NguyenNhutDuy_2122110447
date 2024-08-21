@@ -842,30 +842,42 @@ a[class*='card'] {
   height: 280px; }
 
 .card-category {
-  display: block;
-  margin-bottom: 20px;
-  overflow: hidden;
-  min-height: 410px; }
-  .card-category .card-title {
-    font-weight: 600;
-    font-size: 18px; }
-  .card-category .img-wrap {
+    display: block;
+    margin-bottom: 20px;
     overflow: hidden;
-    display: inline-block;
-    height: 170px;
-    background: #fff0c5; }
-    .card-category .img-wrap img {
-      height: 100%;
-      width: 60%;
-      -o-object-fit: cover;
-         object-fit: cover;
-      mix-blend-mode: multiply; }
-  .card-category .list-menu a:hover {
-    margin-left: 3px;
-    -webkit-transition: .2s;
-    transition: .2s; }
-  .card-category:hover {
-    border-color: #ff6a00; }
+    height: 100px; /* Thay đổi chiều cao tổng thể của thẻ */
+}
+
+    .card-category .card-title {
+        font-weight: 600;
+        font-size: 14px; /* Giảm kích thước chữ nếu cần */
+    }
+
+    .card-category .img-wrap {
+        overflow: hidden;
+        display: block;
+        height: 100px; /* Chiều cao của phần hình ảnh */
+        background: #ffd7d7; /* Màu nền hồng */
+    }
+
+        .card-category .img-wrap img {
+            height: 100%;
+            width: auto; /* Để giữ tỷ lệ khung hình của ảnh */
+            -o-object-fit: cover;
+            object-fit: cover;
+            mix-blend-mode: multiply;
+        }
+
+    .card-category .list-menu a:hover {
+        margin-left: 3px;
+        -webkit-transition: .2s;
+        transition: .2s;
+    }
+
+    .card-category:hover {
+        border-color: #ff6a00;
+    }
+
 
 .card-banner {
   display: -webkit-box;

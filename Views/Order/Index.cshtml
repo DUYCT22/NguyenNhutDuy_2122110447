@@ -1,0 +1,31 @@
+﻿@model IEnumerable<NguyenNhutDuy_2122110447.Context.Order>
+
+<section class="section-content padding-y">
+    <div class="container">
+        @if (Model.Count() != 0)
+        {
+            foreach (var item in Model)
+            {
+                <article class="card card-product-list">
+                    <div class="row no-gutters">
+                        <div class="col-md-12">
+                            <div class="info-main">
+                                <a href="@Url.Action("Details", "Order", new { id = item.id })">
+
+                                    <h4>Đơn hàng lúc: @item.created_at</h4>
+                                    <p>Số điện thoại: @item.phone</p>
+                                    <p>Tổng tiền: @String.Format("{0:N0} VND", item.roral_amount)</p>
+                                </a>
+                            </div> <!-- info-main.// -->
+                        </div> <!-- col.// -->
+                    </div> <!-- row.// -->
+                </article> <!-- card-product .// -->
+            }
+        }
+        else
+        {
+            <h1>Bạn chưa đặt đơn hàng nào</h1>
+        }
+
+    </div>
+</section>

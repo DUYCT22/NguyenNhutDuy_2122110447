@@ -1,0 +1,121 @@
+﻿@using PagedList.Mvc;
+@using PagedList;
+@model PagedList.IPagedList<NguyenNhutDuy_2122110447.Context.Order>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.First().id)
+        </th>
+        <th>
+            <p>Tổng tiền</p>
+        </th>
+        <th>
+            <p>Địa chỉ nhận hàng</p>
+        </th>
+        <th>
+            <p>Số điện thoại</p>
+        </th>
+        <th>
+            <p>Tạo lúc</p>
+        </th>
+        <th>
+            <p>Tên người đặt</p>
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.roral_amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.dalivery_address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.phone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.created_at)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.name)
+            </td>
+            <td>
+                @Html.ActionLink("Xóa", "Delete", new { id = item.id })
+            </td>
+        </tr>
+    }
+
+</table>
+<!-- Pagination Links -->
+<style>
+    /* Trang chính */
+    .pagination .page-link {
+        background-color: #fff; /* Nền trắng */
+        color: #000; /* Chữ đen */
+        border: 1px solid #ddd; /* Viền xám nhạt */
+    }
+
+    /* Trang hiện tại */
+    .pagination .page-item.active .page-link {
+        background-color: #000; /* Nền đen */
+        color: #fff; /* Chữ trắng */
+        border: 1px solid #000; /* Viền đen */
+    }
+
+    /* Trang không hoạt động */
+    .pagination .page-item.disabled .page-link {
+        background-color: #eee; /* Nền xám nhạt */
+        color: #999; /* Chữ xám */
+    }
+</style>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        @if (Model.PageCount > 1)
+        {
+            if (Model.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&laquo;</span>
+                </li>
+            }
+
+            for (int i = 1; i <= Model.PageCount; i++)
+            {
+                <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            if (Model.HasNextPage)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link" aria-hidden="true">&raquo;</span>
+                </li>
+            }
+        }
+    </ul>
+</nav>
